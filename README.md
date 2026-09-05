@@ -1,133 +1,152 @@
-# 🛡️ Bounded Recovery | AI Subscription Recovery Platform
+# Recoup — Bounded AI Recovery for Failed Subscription Payments
 
-[![Python 3.11](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
-[![Pytest](https://img.shields.io/badge/Pytest-18%2F18%20Passed-emerald.svg)](https://docs.pytest.org/)
-[![LLM](https://img.shields.io/badge/AI%20Engine-Anthropic%20Claude-purple.svg)](https://www.anthropic.com/)
-[![License](https://img.shields.io/badge/License-MIT-orange.svg)]()
+**Track:** AI Revenue Recovery | **Built for:** Razorpay AI Buildathon
 
-> **Bounded Recovery** is an autonomous, hybrid AI-powered subscription recovery platform built with **Python 3.11 & FastAPI**. It resolves involuntary subscription churn, enforces deterministic state machine guardrails, executes exponential backoffs, and eliminates double-charging with per-attempt idempotency.
+Recoup is an agent that automatically recovers failed subscription payments — deciding whether to retry, wait, or escalate to a human — using an AI decision layer that is always advisory and never authoritative. A deterministic rule engine enforces hard safety limits underneath it, so the AI can help make smarter decisions but can never cause an unsafe or duplicate action.
 
 ---
 
-## 📊 Key Financial Impact & Empirical Metrics
+## The Problem
 
-In a 55-charge multi-pass terminal execution test across 5 distinct risk buckets:
+Failed recurring payments (insufficient funds, expired cards, declined charges, network errors) are one of the most common causes of involuntary customer churn. Most existing approaches fall into one of two traps:
 
-| Metric | Result | Engineering Significance |
-| :--- | :--- | :--- |
-| **Baseline Recovery Rate** | **0.00%** | Recovery rate if failed charges are abandoned after 1 attempt |
-| **Bounded System Recovery** | **73.48%** | **$138,449.34 revenue secured** out of $188,424.91 total failed volume |
-| **Active Stuck Charges** | **0 charges** | **100% of charges** reached terminal states (`RECOVERED` or `ESCALATED`) |
-| **Safety Overrides** | **13 Enforced** | Rule engine blocked AI recommendations that attempted to exceed attempt caps |
-| **Unit & Integration Tests** | **18 / 18 Passed** | 100% test pass rate verifying FSM, idempotency, backoff, and AI fallbacks |
+1. **Dumb fixed retries** — retry blindly on a schedule regardless of why the payment failed, annoying customers and wasting gateway fees.
+2. **Fully autonomous AI agents** — let an LLM decide freely, with no guardrail against a bad or hallucinated decision — risky when the decision touches real money.
+
+Recoup avoids both traps with a hybrid design.
 
 ---
 
-## ⚡ Core Architecture & Capabilities
+## How It Works
 
-```
-                  +-----------------------+
-                  |  DETECTED (Failure)   |
-                  +-----------+-----------+
-                              |
-                              v
-                  +-----------------------+
-                  |    RETRY_SCHEDULED    | (Exponential Backoff)
-                  +-----------+-----------+
-                              |
-                              v
-                  +-----------------------+
-                  |       RETRYING        | (Idempotent Execution)
-                  +-----------+-----------+
-                              |
-         +--------------------+--------------------+
-         |                    |                    |
-         v                    v                    v
-  +--------------+     +--------------+     +--------------+
-  |  RECOVERED   |     |  ESCALATED   |     |  ABANDONED   |
-  | (Secured $ ) |     |  (Cap Hit)   |     | (Unrecovered)|
-  +--------------+     +--------------+     +--------------+
-```
+1. **Detect** — A failed charge enters the system with a failure reason, amount, and attempt history.
+2. **Decide** — An AI layer (Claude) evaluates the situation and recommends an action with a confidence score and reasoning. This recommendation is only accepted if it falls within limits the rule engine already allows.
+3. **Enforce** — A deterministic rule engine enforces hard stopping rules: a maximum of 3 retries for customer-fault failures (e.g. insufficient funds) and 5 for infrastructure-fault failures (e.g. network errors), since infra issues are cheaper and safer to retry more of. If the AI is uncertain (confidence below threshold), times out, or recommends something the rules don't allow, the system automatically falls back to rule-based logic instead.
+4. **Act** — The charge either retries (with a reason-specific backoff delay), recovers, or escalates to a human queue.
+5. **Log** — Every single decision, whether AI-driven or rule-driven, is written to a structured audit trail with a timestamp, reasoning, and outcome. Nothing happens invisibly.
 
-1. **Deterministic Finite State Machine (FSM)**:
-   - Validates all lifecycle transitions. Illegal state jumps raise `InvalidStateTransitionException`.
-
-2. **Dual Attempt Budgets**:
-   - **Infrastructure Faults (`NETWORK_ERROR`)**: Capped at **5 retries** (`infra_attempt_count`).
-   - **Customer Faults (`INSUFFICIENT_FUNDS`, `CARD_DECLINED`)**: Capped at **3 retries** (`customer_attempt_count`).
-
-3. **Hybrid AI + Rule-Based Guardrails**:
-   - Telemetry evaluated via **Anthropic Claude API (`claude-sonnet-4-6`)**.
-   - Enforces `AI_CONFIDENCE_THRESHOLD = 0.70`.
-   - **Deterministic Fallback**: Gracefully falls back to rules if LLM confidence < 0.70 or API fails.
-   - **Safety Boundary**: Intercepts AI retry suggestions if attempt limits are reached (**13 safety overrides** enforced).
-
-4. **Strict Per-Attempt Idempotency**:
-   - `POST /charges/{id}/retry` requires mandatory `Idempotency-Key` header to guarantee zero double-charging.
-
-5. **Structured Audit Trail Transparency**:
-   - Every transition logs `decision_source` (`"ai_decision"` vs `"rule_based_fallback"`), `decision_source_reason`, `ai_confidence`, and `ai_reasoning`.
+Every retry is also protected by an idempotency key, so a duplicate request (e.g. a retried API call) can never cause a customer to be charged twice.
 
 ---
 
-## 📁 Repository & File Structure
+## Why This Design
 
-```
-.
-├── app/
-│   ├── models.py             # Domain models, Enums, & AuditLogEntry schemas
-│   ├── storage.py            # Thread-safe in-memory store with RLock synchronization
-│   ├── state_machine.py      # Finite State Machine validator & audit logger
-│   ├── decision_engine.py   # Deterministic rules & hybrid AI coordinator
-│   ├── ai_decision.py       # Anthropic Claude LLM client wrapper & confidence evaluator
-│   ├── executor.py          # Idempotent retry execution engine
-│   ├── main.py              # FastAPI REST endpoints & static server
-│   └── static/              # Razorpay glassmorphism live dashboard (HTML, CSS, JS)
-├── tests/
-│   ├── test_agent.py         # Pytest suite (18 unit/integration tests)
-│   └── generate_batch.py    # 55-charge multi-pass batch test simulator
-├── batch_test_results.json   # Evidence payload of 100% terminal batch execution
-├── pyproject.toml            # Project setup & pytest config
-├── requirements.txt          # Dependencies (fastapi, uvicorn, pydantic, pytest, httpx, anthropic)
-└── README.md                 # Project documentation
-```
+The hardest problem wasn't making the AI produce good recommendations — it was making sure a bad AI recommendation could never cause real harm. Recoup solves this by treating the AI purely as an advisor operating inside boundaries it cannot cross:
+
+- If the AI's confidence is below 0.70, the system falls back to rules.
+- If the LLM call fails or times out, the system falls back to rules.
+- If the AI recommends an action the rule engine doesn't allow (e.g. retrying a charge already at its cap), the rule engine overrides it and enforces the safe outcome instead.
+
+In testing, this safety layer caught and blocked **13 unsafe AI recommendations** — proof the boundary isn't just theoretical.
 
 ---
 
-## 🚀 Quick Start & Running Tests
+## Results (Verified, 55+ Synthetic Charges)
 
-### 1. Install Dependencies
+| Metric | Value |
+| :--- | :--- |
+| **Total Failed Volume** | $178,474.42 |
+| **Total Recovered Volume** | $139,470.32 |
+| **Recovery Rate (Recoup)** | **78.15%** |
+| **Recovery Rate (Baseline — no retry system)** | **0.00%** |
+| **AI-Driven Decisions** | 80 |
+| **Rule-Based Fallback Decisions** | 165 |
+| **Safety Overrides Enforced** | 13 |
+| **Automated Test Coverage** | 18 / 18 passing |
+
+*Decision counts exceed the number of charges because a single charge can pass through multiple decision points over its lifecycle (e.g. detection, retry attempt 1, retry attempt 2).*
+
+Raw evidence is saved in [`batch_test_results.json`](batch_test_results.json).
+
+---
+
+## Architecture
+
+```text
+app/
+├── models.py           # Data models: FailedCharge, AuditLogEntry, enums
+├── storage.py          # Thread-safe in-memory store (charges, audit logs, idempotency registry)
+├── state_machine.py    # Finite state machine — validates and logs every transition
+├── decision_engine.py # Deterministic rule engine: stopping rules, backoff, hybrid coordinator
+├── ai_decision.py     # AI decision layer (Claude) — confidence-gated, schema-validated
+├── executor.py        # Idempotent retry executor with thread-safe locking
+└── main.py            # FastAPI endpoints + live ops dashboard
+
+tests/
+├── test_agent.py       # 18 unit/integration tests
+└── generate_batch.py   # 55+ charge batch simulation across 5 risk buckets
+```
+
+State machine: `DETECTED` → `RETRY_SCHEDULED` → `RETRYING` → `RECOVERED` | `ESCALATED` | `ABANDONED`  
+*Terminal states reject further transitions.*
+
+---
+
+## Tech Stack
+
+- **Backend**: Python 3.11, FastAPI, Pydantic v2
+- **AI**: Anthropic Claude (`claude-sonnet-4-6`), used as a confidence-gated advisor, not an autonomous actor
+- **Storage**: In-memory (deliberate scope choice for this build — see Limitations)
+- **Frontend**: Live ops console showing real-time metrics, a charge table, an audit log drawer, and a charge simulator
+
+---
+
+## Running It Locally
+
+### 1. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run Full Test Suite
-```bash
-pytest -v
+### 2. Set your Anthropic API key
+Create a `.env` file in the project root:
+```env
+ANTHROPIC_API_KEY=your-key-here
 ```
 
-### 3. Run End-to-End Batch Simulation
-```bash
-python tests/generate_batch.py
-```
-
-### 4. Launch Live Server & Dashboard
+### 3. Start the server
 ```bash
 python -m uvicorn app.main:app --reload
 ```
-- **Live Dashboard**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-- **OpenAPI Swagger Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **Live dashboard**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- **Interactive API docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+### 4. Try it yourself
+1. Use **Inject Failed Charge** to create a charge already near its retry cap (e.g. 2/3 attempts).
+2. Click **Process AI**, then **Retry**, and watch it either recover or get correctly escalated once it hits the limit.
+3. Click **Logs** on any charge to see its full audit trail, including whether a safety override occurred.
+
+### 5. Run the tests
+```bash
+pytest -v                    # 18 unit/integration tests
+python tests/generate_batch.py # full batch simulation, writes batch_test_results.json
+```
 
 ---
 
-## 🔌 REST API Reference
+## Build Challenges
 
-- `GET /charges` - Retrieve all tracked failed charges.
-- `GET /charges/{id}` - Fetch single charge details by ID.
-- `POST /charges/{id}/process` - Evaluate charge using hybrid decision engine.
-- `POST /charges/{id}/retry` - Execute retry attempt (requires `Idempotency-Key` header).
-- `GET /charges/{id}/logs` - Fetch structured audit history.
-- `GET /analytics/summary` - Real-time metrics, recovery rates, AI counts, and safety overrides.
-- `POST /charges/simulate` - Inject simulated charge with pre-populated attempt counts.
-- `POST /mock-data/reset` - Reset store to pristine initial state.
+1. **Making sure retries don't sneak past their limit**: I had to trace through the exact order of operations to confirm the attempt counter increments before the stopping-rule check runs — otherwise a charge could slip through for one extra retry. Added a dedicated test for this.
+2. **Not every failure deserves the same number of chances**: Early on, every failure type shared one retry budget. A network glitch isn't the customer's fault and is cheap to retry — it shouldn't cost the same "strikes" as insufficient funds. Split into two independent counters: 3 for customer-fault failures, 5 for infrastructure faults.
+3. **Keeping the AI helpful without letting it be risky**: The real challenge wasn't getting good AI recommendations, it was guaranteeing a bad one could never cause harm. Solved with a hybrid design where the AI can only choose within rule-engine-approved bounds, with automatic fallback on low confidence, API failure, or an unsafe suggestion.
+4. **Stopping accidental double-charges**: A duplicate retry request could double-charge a customer. Fixed with per-attempt idempotency keys and thread-safe locking around shared state.
+5. **Getting honest batch numbers**: My first batch test run showed most charges stuck mid-flight because it only processed one pass. Fixed by looping until every charge reaches a real terminal outcome, which produced accurate, honest recovery numbers instead of a partial snapshot.
+
+---
+
+## Limitations & What's Next
+
+This is a scoped 2-week build, and some things were deliberately left out to keep the core logic rigorous rather than spreading thin:
+- **In-memory storage, not a persistent database**: In production this would move to Postgres, with the idempotency registry potentially backed by Redis.
+- **No real payment gateway integration**: Retries are simulated; a production version would integrate with an actual payment processor's retry/capture APIs.
+- **Single failure-recovery loop**: This intentionally covers one narrow, well-tested flow rather than a broad platform, per the buildathon's own guidance to prioritize depth over breadth.
+
+With more time, the next additions would be: a persistent store, real gateway integration, and a notification/escalation integration for the human queue currently only logged as a stub.
+
+---
+
+## Tests
+
+**18 passed in 1.68s**
+
+Covers: dual attempt budget independence, stopping rules for both fault types, idempotency guarantees, backoff timing, audit log correctness, AI high/low-confidence paths, LLM failure fallback, and the AI safety-override guarantee.
