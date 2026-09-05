@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bounded Recovery | AI Subscription Recovery Platform</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="container nav-wrapper">
+      <a href="#" class="brand-logo">
+        <div class="brand-icon">🛡️</div>
+        <span>Bounded Recovery</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#hero">The Problem</a></li>
+        <li><a href="#state-flow">FSM Engine</a></li>
+        <li><a href="#dashboard">Live Console</a></li>
+        <li><a href="#analytics">Results</a></li>
+        <li><a href="#faq">FAQ's</a></li>
+      </ul>
+
+      <a href="#dashboard" class="btn btn-orange">
+        Get Started Free
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Viewport - Pristine Crimson Canyon Atmosphere -->
+  <section class="hero-viewport" id="hero">
+    
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Bounded AI Recovery Engine
+        <span>for Subscription Churn</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Bounded Recovery's autonomous FSM state machine engine resolves payment failures, 
+        schedules intelligent backoffs, and eliminates involuntary churn — 24/7, with zero-double-charge safety guarantees.
+      </p>
+
+      <a href="#dashboard" class="btn btn-white-pill">
+        Talk to Us
+      </a>
+    </div>
+
+    <!-- Bottom Social Proof Marquee -->
+    <div class="hero-social-proof">
+      <div class="social-proof-label">Backed by Industry Leaders</div>
+      <div class="social-proof-logos">
+        <div class="logo-item">✦ Acme Corp</div>
+        <div class="logo-item">📜 Epicurious</div>
+        <div class="logo-item">⚛ Quantum²</div>
+        <div class="logo-item">👁 Foresight</div>
+        <div class="logo-item">❖ Layers</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- SECTION 1: Interactive FSM State Machine Lifecycle Diagram -->
+  <section class="section-wrapper container" id="state-flow">
+    <div class="section-header">
+      <div class="section-badge">⚡ Deterministic State Machine Core</div>
+      <h2 class="section-title">FSM Recovery Lifecycle Engine</h2>
+      <p class="section-subtitle">Real-time telemetry transitions charges across strict permitted states, enforcing dual attempt budgets.</p>
+    </div>
+
+    <div class="fsm-flow-container">
+      <div class="fsm-node">
+        <span class="fsm-node-tag badge-DETECTED">DETECTED</span>
+        <div style="font-size: 0.8rem; color: var(--text-subtle);">Initial Failure</div>
+        <div class="fsm-node-count" id="node-count-detected" style="color: var(--razorpay-cyan);">0</div>
+      </div>
+
+      <div class="fsm-arrow">➔</div>
+
+      <div class="fsm-node">
+        <span class="fsm-node-tag badge-RETRY_SCHEDULED">SCHEDULED</span>
+        <div style="font-size: 0.8rem; color: var(--text-subtle);">Exponential Backoff</div>
+        <div class="fsm-node-count" id="node-count-scheduled" style="color: var(--amber-warning);">0</div>
+      </div>
+
+      <div class="fsm-arrow">➔</div>
+
+      <div class="fsm-node">
+        <span class="fsm-node-tag badge-RETRYING">RETRYING</span>
+        <div style="font-size: 0.8rem; color: var(--text-subtle);">Idempotent Attempt</div>
+        <div class="fsm-node-count" id="node-count-retrying" style="color: var(--razorpay-blue);">0</div>
+      </div>
+
+      <div class="fsm-arrow">➔</div>
+
+      <div class="fsm-node" style="border-color: rgba(16, 185, 129, 0.5);">
+        <span class="fsm-node-tag badge-RECOVERED">RECOVERED</span>
+        <div style="font-size: 0.8rem; color: var(--text-subtle);">Revenue Secured</div>
+        <div class="fsm-node-count" id="node-count-recovered" style="color: var(--emerald-green);">0</div>
+      </div>
+
+      <div class="fsm-arrow">OR</div>
+
+      <div class="fsm-node" style="border-color: rgba(239, 68, 68, 0.5);">
+        <span class="fsm-node-tag badge-ESCALATED">ESCALATED</span>
+        <div style="font-size: 0.8rem; color: var(--text-subtle);">Attempt Cap Hit</div>
+        <div class="fsm-node-count" id="node-count-escalated" style="color: var(--rose-danger);">0</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: Glassmorphism ROI Analytics Dashboard -->
+  <section class="section-wrapper container" id="analytics">
+    <div class="section-header">
+      <div class="section-badge">📊 Real-Time Financial Impact</div>
+      <h2 class="section-title">Automated Revenue Recovery</h2>
+      <p class="section-subtitle">Empirical metric telemetry tracking recovered subscription volume and AI safety overrides.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Failed Volume</div>
+        <div class="stat-value" id="stat-failed-volume">$0.00</div>
+        <div class="stat-subtext">Sum of detected failed subscriptions</div>
+      </div>
+
+      <div class="stat-card" style="border-color: rgba(245, 158, 11, 0.4);">
+        <div class="stat-label">Baseline Recovery (No Retries)</div>
+        <div class="stat-value" style="color: var(--amber-warning);" id="stat-baseline-rate">0.00%</div>
+        <div class="stat-subtext" id="stat-baseline-count">0 charges recovered on Attempt 1</div>
+      </div>
+
+      <div class="stat-card" style="border-color: rgba(16, 185, 129, 0.4);">
+        <div class="stat-label">Bounded System Recovery</div>
+        <div class="stat-value" style="color: var(--emerald-green);" id="stat-recovery-rate">0.00%</div>
+        <div class="stat-subtext" style="color: var(--emerald-green); font-weight: 600;" id="stat-recovered-volume">$0.00 Volume Secured</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">AI vs Rule Ratio</div>
+        <div class="stat-value" style="color: var(--razorpay-blue);" id="stat-ai-ratio">0 / 0</div>
+        <div class="stat-subtext">AI Strategy vs Rule Fallbacks</div>
+      </div>
+
+      <div class="stat-card" style="border-color: rgba(239, 68, 68, 0.4);">
+        <div class="stat-label">Safety Overrides</div>
+        <div class="stat-value" style="color: var(--rose-danger);" id="stat-safety-overrides">0</div>
+        <div class="stat-subtext">AI retries blocked by FSM rules</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Embedded Bounded Recovery Production Console Frame -->
+  <section class="section-wrapper container" id="dashboard">
+    <div class="section-header">
+      <div class="section-badge">💻 Interactive Live Engine</div>
+      <h2 class="section-title">Bounded Recovery Live Console</h2>
+      <p class="section-subtitle">Inspect subscription charges, trigger AI evaluations, and execute idempotent retries live.</p>
+    </div>
+
+    <!-- Browser Frame Container -->
+    <div class="browser-frame">
+      <div class="browser-header">
+        <div class="browser-dots">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+        </div>
+
+        <div class="browser-url">
+          https://boundedrecovery.ai/console/live-recovery-engine
+        </div>
+
+        <button class="btn btn-secondary btn-sm" id="btn-reset-db">
+          🔄 Reset DB
+        </button>
+      </div>
+
+      <div class="browser-body">
+        
+        <!-- Filter Tabs -->
+        <div class="tabs-header">
+          <button class="tab-btn active" data-tab="all">All Charges</button>
+          <button class="tab-btn" data-tab="active">Active Queue</button>
+          <button class="tab-btn" data-tab="RECOVERED">Recovered</button>
+          <button class="tab-btn" data-tab="ESCALATED">Escalated</button>
+          
+          <button class="btn btn-secondary btn-sm" id="btn-refresh-charges" style="margin-left: auto;">
+            🔄 Refresh Console
+          </button>
+        </div>
+
+        <!-- Charges Grid -->
+        <div class="charges-grid" id="charges-grid">
+          <!-- Dynamically populated via app.js -->
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: Split Grid - Inject Charge Simulator & 55-Charge Batch Explorer -->
+  <section class="section-wrapper container">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+      
+      <!-- Inject Charge Simulator Form -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 2.25rem; backdrop-filter: blur(20px);">
+        <div class="section-badge">⚡ Instant Presentation Simulator</div>
+        <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; color: #fff;">Inject Failed Charge</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          Pre-populate attempt counts (e.g. 2/3 customer attempts) for instant live presentation demos.
+        </p>
+
+        <form id="form-simulate-charge">
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem;">Amount ($)</label>
+            <input type="number" step="0.01" id="sim-amount" value="199.00" style="width: 100%; background: #05070C; border: 1px solid var(--border-color); border-radius: 10px; padding: 0.7rem; color: #fff;" required />
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem;">Failure Reason</label>
+            <select id="sim-reason" style="width: 100%; background: #05070C; border: 1px solid var(--border-color); border-radius: 10px; padding: 0.7rem; color: #fff;">
+              <option value="INSUFFICIENT_FUNDS">INSUFFICIENT_FUNDS (Soft Customer Fault)</option>
+              <option value="NETWORK_ERROR">NETWORK_ERROR (Infrastructure Fault)</option>
+              <option value="CARD_DECLINED">CARD_DECLINED (Soft Customer Fault)</option>
+              <option value="CARD_EXPIRED">CARD_EXPIRED (Hard Failure - Immediate Escalation)</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem;">Customer Attempts</label>
+              <input type="number" id="sim-customer-cnt" value="0" min="0" max="3" style="width: 100%; background: #05070C; border: 1px solid var(--border-color); border-radius: 10px; padding: 0.7rem; color: #fff;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem;">Infra Attempts</label>
+              <input type="number" id="sim-infra-cnt" value="0" min="0" max="5" style="width: 100%; background: #05070C; border: 1px solid var(--border-color); border-radius: 10px; padding: 0.7rem; color: #fff;" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-orange" style="width: 100%;">
+            🚀 Inject Charge into Console
+          </button>
+        </form>
+      </div>
+
+      <!-- 55-Charge Batch Evidence Explorer -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 2.25rem; backdrop-filter: blur(20px);">
+        <div class="section-badge" style="background: rgba(16, 185, 129, 0.18); border-color: rgba(16, 185, 129, 0.4); color: #6EE7B7;">
+          📊 Verified Batch Evidence
+        </div>
+        <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; color: #fff;">55-Charge Multi-Pass Lifecycle</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          Empirical multi-pass execution results from <code style="color: var(--razorpay-cyan);">batch_test_results.json</code>.
+        </p>
+
+        <div style="background: #05070C; border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem; font-family: var(--font-mono); font-size: 0.825rem; line-height: 1.7;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="color: var(--emerald-green); font-weight: 700;">Status: TERMINAL_STATE_COMPLETED</span>
+            <span style="color: var(--text-subtle);">Live Telemetry</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; margin-bottom: 1rem;">
+            <div id="batch-progress-bar" style="width: 73.50%; height: 100%; background: linear-gradient(90deg, var(--razorpay-blue), var(--emerald-green));"></div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between;">
+            <span>Total Failed Volume:</span>
+            <span style="color: #fff; font-weight: 700;" id="batch-failed-volume">$171,605.81</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Total Recovered Revenue:</span>
+            <span style="color: var(--emerald-green); font-weight: 700;" id="batch-recovered-volume">$126,132.20</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Terminal Recovery Rate:</span>
+            <span style="color: var(--razorpay-cyan); font-weight: 700;" id="batch-recovery-rate">73.50%</span>
+          </div>
+          <hr style="border-color: var(--border-color); margin: 0.85rem 0;" />
+          <div style="display: flex; justify-content: space-between;">
+            <span>AI Decisions Accepted:</span>
+            <span style="color: var(--purple-accent); font-weight: 700;" id="batch-ai-decisions">80</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Rule Fallbacks Executed:</span>
+            <span style="color: var(--text-subtle);" id="batch-rule-fallbacks">165</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Safety Overrides Enforced:</span>
+            <span style="color: var(--amber-warning); font-weight: 700;" id="batch-safety-overrides">13 Enforced</span>
+          </div>
+          <hr style="border-color: var(--border-color); margin: 0.85rem 0;" />
+          <div style="display: flex; justify-content: space-between; font-weight: 700;">
+            <span style="color: var(--emerald-green);" id="batch-recovered-count">39 RECOVERED</span>
+            <span style="color: var(--rose-danger);" id="batch-escalated-count">21 ESCALATED</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 5: Technical FAQ Accordion Section -->
+  <section class="section-wrapper container" id="faq">
+    <div class="section-header">
+      <div class="section-badge">❓ Technical Deep-Dive</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-subtitle">Everything you need to know about Bounded Recovery's FSM state machine and hybrid AI safety architecture.</p>
+    </div>
+
+    <div class="faq-grid">
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>How does the dual attempt budget system operate?</span>
+          <span>+</span>
+        </div>
+        <div class="faq-answer">
+          Bounded Recovery separates retries into two independent budgets: Customer-fault attempts (capped at 3, e.g., INSUFFICIENT_FUNDS or CARD_DECLINED) and Infrastructure-fault attempts (capped at 5, e.g., NETWORK_ERROR). A customer fault retry does not consume the infrastructure budget, and vice versa.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>What happens when Anthropic Claude confidence is below 0.70?</span>
+          <span>+</span>
+        </div>
+        <div class="faq-answer">
+          When the AI decision layer returns a confidence score below the defined threshold (0.70) or fails due to network/parsing errors, Bounded Recovery gracefully falls back to deterministic rule-based evaluation. The action is dispatched and audited with <code>decision_source: "rule_based_fallback"</code>.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>How are double-charges prevented during rapid retry calls?</span>
+          <span>+</span>
+        </div>
+        <div class="faq-answer">
+          Every retry execution requires a mandatory <code>Idempotency-Key</code> header. Bounded Recovery locks charge processing and caches completed attempt payloads. If a duplicate retry call arrives with the same key, Bounded Recovery returns the cached response instantly without mutating counters or re-executing gateway calls.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>What is the Safety Override layer?</span>
+          <span>+</span>
+        </div>
+        <div class="faq-answer">
+          If the LLM recommends retrying a charge that has already reached its attempt budget limit (e.g. 3/3 customer attempts), Bounded Recovery's deterministic rule engine intercepts and overrides the recommendation, enforcing <code>ESCALATED</code> state and recording a <code>safety_override</code> audit event.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Overlay Drawer for Audit Logs -->
+  <div class="modal-overlay" id="log-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 700;" id="modal-charge-title">Audit Trail History</h3>
+          <span style="font-size: 0.75rem; color: var(--text-subtle);" id="modal-charge-subtitle">Charge ID</span>
+        </div>
+        <button class="modal-close" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="log-timeline-container" style="display: flex; flex-direction: column; gap: 1rem;">
+          <!-- Dynamically populated via app.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      © 2026 Bounded Recovery Inc. All rights reserved. Powered by Python 3.11, FastAPI, and Anthropic Claude LLM.
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
