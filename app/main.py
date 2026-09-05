@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional

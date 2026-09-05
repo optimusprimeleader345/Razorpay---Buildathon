@@ -8,6 +8,10 @@ from pydantic import BaseModel, Field, ValidationError
 
 from app.models import FailedCharge
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Named constant for AI decision confidence threshold
 AI_CONFIDENCE_THRESHOLD: float = 0.70
 
@@ -78,7 +82,6 @@ def ai_evaluate(charge: FailedCharge) -> AIDecisionEvaluation:
         response = client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=300,
-            temperature=0.0,
             messages=[{"role": "user", "content": prompt}]
         )
 
