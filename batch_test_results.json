@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "batch_size": 55,
+    "status": "TERMINAL_STATE_COMPLETED",
+    "buckets_distribution": {
+      "bucket_1_standard": 30,
+      "bucket_2_prepopulated_near_cap": 11,
+      "bucket_3_ambiguous_ai_confidence": 7,
+      "bucket_4_safety_override_cap": 4,
+      "bucket_5_edge_cases": 3
+    }
+  },
+  "analytics_summary": {
+    "total_failed_volume": 188424.91,
+    "total_recovered_volume": 138449.34,
+    "recovery_rate_percentage": 73.48,
+    "baseline_recovery_rate_percentage": 0.0,
+    "recovered_on_first_attempt_count": 0,
+    "ai_decision_count": 80,
+    "rule_fallback_count": 165,
+    "safety_overrides_count": 13,
+    "charges_by_state": {
+      "DETECTED": 0,
+      "RETRY_SCHEDULED": 0,
+      "RETRYING": 0,
+      "RECOVERED": 39,
+      "ESCALATED": 21,
+      "ABANDONED": 0
+    },
+    "charges_by_reason": {
+      "INSUFFICIENT_FUNDS": 26,
+      "CARD_EXPIRED": 3,
+      "CARD_DECLINED": 12,
+      "NETWORK_ERROR": 17,
+      "INVALID_CARD_DETAILS": 2
+    }
+  }
+}
